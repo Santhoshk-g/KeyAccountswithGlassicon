@@ -1,0 +1,194 @@
+<template>
+
+    <lightning-card icon-name="standard:report" title='GlassIcon Reports for Key Accounts'>
+        <lightning-layout>
+        
+            
+                <lightning-combobox label="Business" value={recordtype} required="true"
+                                    class="slds-p-around_medium"
+                                    options={business} onchange={handlebusinessChange}>
+                                    </lightning-combobox>
+             
+                <lightning-input label="From Date" required="true"
+                                 type="date" class="slds-p-around_medium"
+                                 value={fromdate}
+                                 onchange={fromDateChange}>
+                                 </lightning-input>
+                <lightning-input label="To Date" required="true"
+                                 type="date" class="slds-p-around_medium"
+                                 value={todate}
+                                 onchange={toDateChange}>
+                                 </lightning-input>
+                
+         <div style="padding-top:40px;">          
+            <lightning-button label="Submit"
+            variant="brand" 
+            class="slds-var-m-around_xx-small"
+            onclick={submit}></lightning-button>
+<template if:true={Gdata}> 
+    <lightning-button label="Unbiled Accounts"
+            variant="destructive-text"
+            icon-name="utility:resource_absence"
+            class="slds-var-m-around_xx-small"
+            onclick={showtemplate}></lightning-button>                 
+<lightning-button label="Export"
+            variant="brand-outline"
+            icon-name="utility:outcome" 
+            class="slds-var-m-around_xx-small"
+            onclick={exportData}></lightning-button>
+
+        </template>
+        </div><template if:true={Gdata}>
+                         <div class="slds-float_right" style="margin-left: 15%;padding-top:3%">
+                           <span  class="slds-badge slds-theme_error"><b>Unbilled Accounts : {undata}</b></span>
+                           
+                       </div>
+                       
+                    </template>
+             <template if:true={Gdata}>
+                        <div class="slds-float_right" style="margin-left: 1.5%;padding-top:3%">
+                           <span  class="slds-badge slds-theme_success"><b>Billed Accounts : {keyCount}</b></span>
+                      </div></template>        
+
+             </lightning-layout>
+        <div class="slds-grid slds-wrap">
+            <div class="slds-col slds-large-size_12-of-12 slds-medium-size_1-of-12 slds-size_1-of-12" >
+              <span>
+                <div style="margin-left: 3%" class="slds-text-color_destructive">
+                  <b>{error}</b>
+                </div>
+            <template if:true={loaded}>
+                <lightning-spinner alternative-text="Loading"></lightning-spinner>
+            </template>
+            
+                <template if:true={Gdata}>
+                  <div class="slds-scrollable" style="height:30%;width:100%">
+              
+                    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered">
+                    <thead>
+                        <tr>
+                            <th>Account</th>
+                            <th>City</th>
+                            <th>Opportunity</th>
+                            <th>Region</th>
+                            <th>SalesArea</th>
+                            <th>TEQ</th>
+                            <th>AQ</th>
+                            
+                            
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <template for:each={groupedData} for:item="group">
+                            <tr key={group.AccountName}>
+                                <td class="slds-text-title_caps wrapped-content"><b>{group.AccountName}</b></td>
+  
+  
+                                <td>
+                                  <template for:each={group.oppdata} for:item="person">
+                                    <div key={person}>{person.City}</div>
+                                  </template>
+                                </td>
+                                
+                                <td>
+                                  <template for:each={group.oppdata} for:item="person">
+                                         
+                                 <div class="wrapped-content" key={person}>{person.opportunityName}</div> 
+                                </template>
+                                </td> 
+                                
+                                <td>
+                                  <template for:each={group.oppdata} for:item="person">
+                                         
+                                 <div key={person}>{person.opportunityRegion}</div> 
+                                </template>
+                                </td>
+                                <td>
+                                  <template for:each={group.oppdata} for:item="person">
+                                         
+                                   <div key={person}>{person.SalesArea}</div>
+                                  </template> </td>
+                                                  
+                                <td>
+                                  <template for:each={group.oppdata} for:item="person">
+                                         
+                                 <div key={person}>{person.TotalEstimatedQuantity}</div> 
+                                </template>
+                                </td>
+                                <td>
+                                  <template for:each={group.oppdata} for:item="person">
+                                         
+                                 <div key={person}>{person.AppropriatedQuantity}</div> 
+                                </template>
+                                </td> 
+                                
+                              
+                        
+                            </tr>
+                        </template>
+                    </tbody>
+                </table></div></template>
+              
+              
+              </span>
+                
+            </div>
+          </div>
+          <template if:true={isfilter} >
+        
+        <section role="dialog"  class="slds-modal slds-fade-in-open">
+        <div class="slds-modal__container">
+        <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={hideModalBox}>
+          <lightning-icon icon-name="utility:close"
+                          alternative-text="close"
+                          variant="inverse"
+                          size="small" ></lightning-icon>
+          <span class="slds-assistive-text">Close</span>
+        </button>
+        
+          <!-- modal body start -->
+         <lightning-card title="Unbilled GlassIcon Accounts" >
+            <div class="slds-scrollable" style="height:27rem;width:40rem" tabindex="0">
+            <div class="slds-text-longform" style="width:150%">
+                    <!--<table class="slds-table slds-table_cell-buffer slds-table_bordered">-->
+                      <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered">
+                      <thead>
+                          <tr>
+                              <th>Account</th>
+                              <th>City</th>
+                              <th>Type</th>
+                              <th>TEQ</th>
+                              <th>AQ</th>
+                              
+                              
+                          </tr>
+                      </thead>
+                      <tbody>
+                        <template for:each={unbilledacc} for:item="acc">
+                            <tr key ={acc.Name}>
+                                <th>{acc.Name}</th>
+                                <th>{acc.City_Name__c}</th>
+                                <th>{acc.Type}</th>
+                                <th><p>0</p></th>
+                                <th><p>0</p></th>
+                            </tr>
+                        </template>
+                      </tbody>
+                  </table></div>
+                                  </div>
+          
+        
+          <!-- modal footer start-->
+          &nbsp;&nbsp;
+          <footer class="slds-modal__footer">
+            <button class="slds-button slds-button_brand" onclick={download}>Download</button>
+            
+          </footer>
+        </lightning-card>
+        </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+        
+        </template>
+  </lightning-card>
+  </template>
